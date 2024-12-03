@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/office-ui-fabric-core/11.1.0/css/fabric.min.css" />
+    <style>
+        /* Global body styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        /* Header styling */
+        .header-container {
+            background-color: #ffffff;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 0;
+            width: 100%;
+            border-bottom: 2px solid #ccc; /* Darker divider */
+            display: flex;
+            justify-content: flex-start;
+            padding-left: 30px; /* Shift the RoleMiner logo to the right */
+        }
+        .header-container h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #8B0000; /* Role in red */
+            display: inline-block;
+        }
+        .header-container h1 span {
+            color: #4B4B4B; /* Miner in dark grey */
+        }
+
+        /* Login container styling */
+        .login-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px 30px;
+            text-align: left;
+            width: 350px;
+        }
+        .login-container h1 {
+            font-size: 24px; /* Larger Log In title */
+            margin-bottom: 20px;
+            color: #333;
+            text-align: left; /* Align title to the left */
+        }
+
+        /* Text field styling */
+        .ms-TextField {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column; /* Stack the label and input vertically */
+        }
+        .ms-TextField label {
+            font-size: 12px; /* Smaller font for labels */
+            margin-bottom: 5px; /* Add spacing between label and input */
+        }
+        .ms-TextField input {
+            font-size: 14px; /* Slightly smaller input font */
+        }
+
+        /* Button styling */
+        .ms-Button {
+            width: 100%;
+            margin-top: 15px;
+            background-color: #0078D4; /* Match the blue button color */
+            color: #ffffff;
+        }
+        .ms-Button:hover {
+            background-color: #005A9E; /* Slightly darker blue on hover */
+        }
+
+        /* Error and logout messages */
+        .error {
+            color: red;
+            font-size: 0.875rem;
+        }
+        .message {
+            color: green;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+<div class="header-container">
+    <h1>Role<span>Miner</span></h1>
+</div>
+
+<div class="login-container">
+    <h1>Log In</h1>
+    <form th:action="@{/login}" method="post">
+        <div class="ms-TextField">
+            <label class="ms-Label" for="username">Username</label>
+            <input class="ms-TextField-field" type="text" id="username" name="username" required />
+        </div>
+        <div class="ms-TextField">
+            <label class="ms-Label" for="password">Password</label>
+            <input class="ms-TextField-field" type="password" id="password" name="password" required />
+        </div>
+        <button class="ms-Button ms-Button--primary" type="submit">
+            <span class="ms-Button-label">Log In</span>
+        </button>
+        <div class="form-group">
+            <p th:if="${param.error}" class="error">Invalid username or password</p>
+            <p th:if="${param.logout}" class="message">You have been logged out</p>
+        </div>
+    </form>
+</div>
+</body>
+</html>

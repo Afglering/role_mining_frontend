@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mining Service</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/office-ui-fabric-core/11.1.0/css/fabric.min.css" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+        }
+        .header-container {
+            width: 100%;
+            background-color: #ffffff;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-bottom: 2px solid #ccc; /* Darker divider */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: absolute;
+            top: 0;
+        }
+        .header-container h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #8B0000;
+            display: flex;
+            align-items: center;
+        }
+        .header-container h1 span {
+            color: #4B4B4B; /* Miner in dark grey */
+        }
+        .header-container .divider {
+            margin: 0 10px;
+            height: 20px;
+            width: 1px;
+            background-color: #ccc;
+        }
+        .header-container .section-title {
+            font-size: 18px;
+            color: #333;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        .user-info .user-name {
+            font-size: 16px;
+            color: #0078D4;
+            margin-right: 10px;
+        }
+        .user-info .user-avatar {
+            background-color: #0078D4;
+            color: white;
+            border-radius: 50%;
+            font-size: 16px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            width: 400px;
+            background-color: #ffffff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+        input, select, button {
+            width: 100%;
+            max-width: 200px; /* Reduced horizontal length */
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #005A9E;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #00457C;
+        }
+    </style>
+    <script th:inline="javascript">
+        function updateAlgorithmParameters() {
+            let i;
+            const algorithm = document.getElementById('algorithm').value;
+            const parameterGroups = document.getElementsByClassName('parameter-group');
+            for (i = 0; i < parameterGroups.length; i++) {
+                parameterGroups[i].style.display = 'none';
+            }
+            const commonParameters = document.getElementsByClassName('common-parameters');
+            for (i = 0; i < commonParameters.length; i++) {
+                commonParameters[i].style.display = 'block';
+            }
+            const relevantGroups = document.getElementsByClassName(algorithm + '-parameters');
+            for (i = 0; i < relevantGroups.length; i++) {
+                relevantGroups[i].style.display = 'block';
+            }
+        }
+        window.onload = function() {
+            updateAlgorithmParameters();
+        }
+    </script>
+</head>
+<body>
+<div class="header-container">
+    <h1>
+        Role<span>Miner</span>
+        <div class="divider"></div>
+        <span class="section-title">Mining Service</span>
+    </h1>
+    <div class="user-info">
+        <span class="user-name">Admin_User</span>
+        <div class="user-avatar">👤</div>
+    </div>
+</div>
+
+<div class="container">
+    <h1>Run New Clustering</h1>
+    <form th:action="@{/clustering/run}" th:object="${clusteringRequest}" method="post">
+        <label for="algorithm">Algorithm:</label>
+        <select id="algorithm" name="algorithm" th:field="*{algorithm}" onchange="updateAlgorithmParameters()">
+            <option th:each="alg : ${algorithms}" th:value="${alg}" th:text="${alg}"></option>
+        </select>
+
+        <div class="parameter-group common-parameters">
+            <label for="randomState">Random State:</label>
+            <input type="number" id="randomState" name="randomState" th:field="*{randomState}"/>
+        </div>
+
+        <div class="parameter-group kmeans-parameters hierarchical-parameters">
+            <label for="numClusters">Number of Clusters:</label>
+            <input type="number" id="numClusters" name="numClusters" th:field="*{numClusters}"/>
+            <label for="minClusters">Minimum Number of Clusters:</label>
+            <input type="number" id="minClusters" name="minClusters" th:field="*{minClusters}"/>
+            <label for="maxClusters">Maximum Number of Clusters:</label>
+            <input type="number" id="maxClusters" name="maxClusters" th:field="*{maxClusters}"/>
+        </div>
+
+        <div class="parameter-group kmeans-parameters">
+            <label for="kmeansNInit">KMeans n_init:</label>
+            <input type="number" id="kmeansNInit" name="kmeansNInit" th:field="*{kmeansNInit}"/>
+            <label for="kmeansMaxIter">KMeans max_iter:</label>
+            <input type="number" id="kmeansMaxIter" name="kmeansMaxIter" th:field="*{kmeansMaxIter}"/>
+        </div>
+
+        <div class="parameter-group hierarchical-parameters">
+            <label for="hierarchicalLinkage">Hierarchical Linkage:</label>
+            <select id="hierarchicalLinkage" name="hierarchicalLinkage" th:field="*{hierarchicalLinkage}">
+                <option th:each="linkage : ${parameters.hierarchicalLinkageOptions}" th:value="${linkage}" th:text="${linkage}"></option>
+            </select>
+            <label for="hierarchicalMetric">Hierarchical Metric:</label>
+            <select id="hierarchicalMetric" name="hierarchicalMetric" th:field="*{hierarchicalMetric}">
+                <option th:each="metric : ${parameters.hierarchicalMetricOptions}" th:value="${metric}" th:text="${metric}"></option>
+            </select>
+        </div>
+
+        <div class="parameter-group dbscan-parameters">
+            <label for="dbscanEps">DBSCAN Epsilon:</label>
+            <input type="number" step="0.01" id="dbscanEps" name="dbscanEps" th:field="*{dbscanEps}"/>
+            <label for="dbscanMinSamples">DBSCAN Min Samples:</label>
+            <input type="number" id="dbscanMinSamples" name="dbscanMinSamples" th:field="*{dbscanMinSamples}"/>
+            <label for="dbscanMetric">DBSCAN Metric:</label>
+            <select id="dbscanMetric" name="dbscanMetric" th:field="*{dbscanMetric}">
+                <option th:each="metric : ${parameters.dbscanMetricOptions}" th:value="${metric}" th:text="${metric}"></option>
+            </select>
+            <label for="dbscanAlgorithm">DBSCAN Algorithm:</label>
+            <select id="dbscanAlgorithm" name="dbscanAlgorithm" th:field="*{dbscanAlgorithm}">
+                <option th:each="alg : ${parameters.dbscanAlgorithmOptions}" th:value="${alg}" th:text="${alg}"></option>
+            </select>
+        </div>
+
+        <button type="submit">Run Clustering</button>
+    </form>
+</div>
+</body>
+</html>

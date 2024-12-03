@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <title>Clustering Result</title>
+  <!-- Include Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Include Fluent UI Core -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/office-ui-fabric-core/11.1.0/css/fabric.min.css">
+  <!-- CSRF Meta Tags -->
+  <meta name="_csrf" th:content="${_csrf.token}" />
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .header-container {
+      width: 100%;
+      background-color: #ffffff;
+      padding: 10px 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-bottom: 2px solid #ccc; /* Darker divider */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-container h1 {
+      margin: 0;
+      font-size: 20px;
+      color: #8B0000;
+      display: flex;
+      align-items: center;
+    }
+    .header-container h1 span {
+      color: #4B4B4B; /* Miner in dark grey */
+    }
+    .header-container .divider {
+      margin: 0 10px;
+      height: 20px;
+      width: 1px;
+      background-color: #ccc;
+    }
+    .header-container .section-title {
+      font-size: 18px;
+      color: #333;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+    }
+    .user-info .user-name {
+      font-size: 16px;
+      color: #0078D4;
+      margin-right: 10px;
+    }
+    .user-info .user-avatar {
+      background-color: #0078D4;
+      color: white;
+      border-radius: 50%;
+      font-size: 16px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .main-container {
+      margin: 30px auto;
+      max-width: 1200px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      height: 80vh; /* Adjust the height as needed */
+    }
+    .left-panel {
+      width: 25%;
+      background-color: #ffffff;
+      border-right: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 8px 0 0 8px;
+      overflow-y: auto;
+    }
+    .right-panel {
+      width: 75%;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .cluster-button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 5px;
+      background-color: #e7e7e7;
+      border: none;
+      text-align: left;
+      color: black;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background-color 0.3s ease;
+    }
+    .cluster-button:hover {
+      background-color: #d0d0d0;
+    }
+    .cluster-button.active {
+      background-color: #0078D4;
+      color: white;
+    }
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      font-size: 20px;
+    }
+    .notification {
+      display: none;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .notification.success {
+      color: green;
+    }
+    .notification.error {
+      color: red;
+    }
+    .form-group label {
+      font-weight: bold;
+    }
+    ul {
+      padding: 0;
+      list-style: none;
+    }
+    ul li {
+      background-color: #f4f4f4;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+    }
+    button {
+      background-color: #0078D4;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005a9e;
+    }
+    h2 {
+      color:black;
+    }
+    /* Updated CSS for scrollable lists */
+    #cluster-details {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .nav-tabs {
+      flex-shrink: 0;
+    }
+    .tab-content {
+      flex-grow: 1;
+      overflow-y: auto;
+      position: relative;
+    }
+    .tab-pane h4 {
+      position: sticky;
+      top: 0;
+      background-color: white;
+      z-index: 1;
+      padding-top: 10px;
+      margin-top: 0;
+    }
+    /* Ensure the form stays at the bottom */
+    #create-role-form {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+<div class="header-container">
+  <h1>
+    Role<span>Miner</span>
+    <div class="divider"></div>
+    <span class="section-title">Mining Service Results</span>
+  </h1>
+  <div class="user-info">
+    <span class="user-name">Admin_User</span>
+    <div class="user-avatar">👤</div>
+  </div>
+</div>
+
+<div class="main-container">
+  <!-- Left Panel -->
+  <div class="left-panel">
+    <h3>Candidates</h3>
+    <div th:each="cluster, iterStat : ${clusteringResult.clusters}">
+      <button class="cluster-button"
+              th:id="'cluster-button-' + ${iterStat.index}"
+              th:data-index="${iterStat.index}"
+              th:text="'Canidate ' + (${cluster.clusterLabel} + 1)">
+      </button>
+    </div>
+  </div>
+
+  <!-- Right Panel -->
+  <div class="right-panel">
+    <div id="loading-spinner" class="loading-spinner">Loading...</div>
+    <div id="notification" class="notification"></div>
+    <div id="cluster-details">
+      <h2 id="cluster-label">Candidate</h2>
+      <!-- Tabs -->
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a href="#" class="nav-link active tab-link" data-tab="users-tab">Users</a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link tab-link" data-tab="roles-tab">System Roles</a>
+        </li>
+      </ul>
+      <!-- Tab Contents -->
+      <div class="tab-content">
+        <div id="users-tab" class="tab-pane active">
+          <ul id="user-list" class="list-group mt-3">
+            <!-- User IDs will be populated here -->
+          </ul>
+        </div>
+        <div id="roles-tab" class="tab-pane">
+          <ul id="role-list" class="list-group mt-3">
+            <!-- Role details will be populated here -->
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Form to create new role -->
+    <form id="create-role-form" class="mt-4">
+      <input type="hidden" name="runId" th:value="${clusteringResult.runId}" />
+      <input type="hidden" name="clusterLabel" />
+      <div class="form-group">
+        <label for="roleName">Role Name:</label>
+        <input type="text" id="roleName" name="name" class="form-control" required />
+      </div>
+      <div class="form-group">
+        <label for="identifier">Identifier:</label>
+        <input type="text" id="identifier" name="identifier" class="form-control" required />
+      </div>
+      <div class="form-group">
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" class="form-control" />
+      </div>
+      <div class="form-group">
+        <label for="createdBy">Created By:</label>
+        <input type="text" id="createdBy" name="createdBy" class="form-control" required />
+      </div>
+      <div class="form-group form-check">
+        <input type="checkbox" id="autoAssignUsers" name="autoAssignUsers" value="true" class="form-check-input" checked />
+        <label for="autoAssignUsers" class="form-check-label">Auto Assign Users</label>
+      </div>
+      <button type="submit" class="btn btn-primary">Create Role</button>
+    </form>
+  </div>
+</div>
+
+<!-- Include jQuery and Bootstrap JS -->
+<script th:inline="javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:inline="javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- JavaScript Code -->
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  var clustersJson = /*[[${clustersJson}]]*/ '';
+  var clusters = JSON.parse(clustersJson);
+  console.log('Clusters:', clusters); // For debugging
+  var currentIndex = 0;
+
+  $(document).ready(function() {
+    // Function to load cluster details
+    function loadCluster(index) {
+      if (index < 0 || index >= clusters.length) {
+        $('#cluster-details').hide();
+        return;
+      }
+
+      currentIndex = index;
+      var cluster = clusters[index];
+      console.log('Current Cluster:', cluster); // For debugging
+
+      // Update active button
+      $('.cluster-button').removeClass('active');
+      $('#cluster-button-' + index).addClass('active');
+
+      // Show loading spinner
+      $('#loading-spinner').show();
+      $('#cluster-details').hide();
+      $('#notification').hide();
+
+      // Simulate loading time
+      setTimeout(function() {
+        // Hide loading spinner
+        $('#loading-spinner').hide();
+        $('#cluster-details').show();
+
+        // Update cluster label
+        var clusterNumber = parseInt(cluster.cluster_label) + 1;
+        $('#cluster-label').text('Candidate ' + clusterNumber);
+        $('input[name="clusterLabel"]').val(cluster.cluster_label);
+
+        // Populate Users tab
+        var userList = $('#user-list');
+        userList.empty();
+        if (cluster.user_ids && cluster.user_ids.length > 0) {
+          cluster.user_ids.forEach(function(userId) {
+            userList.append('<li class="list-group-item">' + userId + '</li>');
+          });
+        } else {
+          userList.append('<li class="list-group-item">No users found.</li>');
+        }
+
+        // Populate System Roles tab
+        var roleList = $('#role-list');
+        roleList.empty();
+        if (cluster.role_details && Object.keys(cluster.role_details).length > 0) {
+          var rolesFound = false; // Flag to check if any roles with count > 0 are found
+          for (var role in cluster.role_details) {
+            var count = cluster.role_details[role];
+            if (count > 0) { // Only display roles with count > 0
+              rolesFound = true;
+              roleList.append('<li class="list-group-item">' + role + ': ' + count + '</li>');
+            }
+          }
+          if (!rolesFound) {
+            roleList.append('<li class="list-group-item">No roles found.</li>');
+          }
+        } else {
+          roleList.append('<li class="list-group-item">No roles found.</li>');
+        }
+      }, 300); // Simulated loading delay
+    }
+
+    // Initial load
+    loadCluster(0);
+
+    // Cluster button click handler
+    $('.cluster-button').click(function() {
+      var index = $(this).data('index');
+      loadCluster(index);
+    });
+
+    // Tab link click handler
+    $('.tab-link').click(function(e) {
+      e.preventDefault();
+      var tabId = $(this).data('tab');
+
+      // Set active tab
+      $('.tab-link').removeClass('active');
+      $(this).addClass('active');
+
+      // Show corresponding tab content
+      $('.tab-pane').removeClass('active');
+      $('#' + tabId).addClass('active');
+    });
+
+    // Get CSRF token and header from meta tags
+    var csrfToken = $('meta[name="_csrf"]').attr('content');
+    var csrfHeader = $('meta[name="_csrf_header"]').attr('content');
+
+    // Form submission handler
+    $('#create-role-form').submit(function(e) {
+      e.preventDefault();
+      var form = $(this);
+      var formData = form.serialize();
+
+      // Disable submit button
+      form.find('button[type="submit"]').prop('disabled', true);
+
+      // Send AJAX request
+      $.ajax({
+        url: /*[[@{/roles/create}]]*/,
+        method: 'POST',
+        data: formData,
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader(csrfHeader, csrfToken);
+        },
+        success: function(response) {
+          // Show success notification
+          $('#notification').removeClass('error').addClass('success').text('Role created successfully.').show();
+
+          // Remove the cluster from the list
+          clusters.splice(currentIndex, 1);
+          $('#cluster-button-' + currentIndex).remove();
+
+          // Update the cluster indices and IDs
+          $('.cluster-button').each(function(index) {
+            $(this).attr('id', 'cluster-button-' + index);
+            $(this).data('index', index);
+          });
+
+          // Load next cluster
+          if (clusters.length > 0) {
+            if (currentIndex >= clusters.length) {
+              currentIndex = clusters.length - 1;
+            }
+            loadCluster(currentIndex);
+          } else {
+            // No more clusters
+            $('#cluster-details').hide();
+            $('#notification').text('All clusters processed.').show();
+          }
+        },
+        error: function(xhr, status, error) {
+          var errorMessage = 'Error: ' + (xhr.responseJSON ? xhr.responseJSON.message : xhr.responseText);
+          // Display error notification
+          $('#notification').removeClass('success').addClass('error').text(errorMessage).show();
+          // Re-enable submit button
+          form.find('button[type="submit"]').prop('disabled', false);
+        }
+      });
+    });
+  });
+  /*]]>*/
+</script>
+</body>
+</html>

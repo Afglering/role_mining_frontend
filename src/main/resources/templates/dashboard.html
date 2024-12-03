@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/office-ui-fabric-core/11.1.0/css/fabric.min.css" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .header-container {
+            background-color: #ffffff;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-bottom: 2px solid #ccc; /* Darker divider */
+            display: flex;
+            align-items: center;
+        }
+        .header-container h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #8B0000;
+            display: flex;
+            align-items: center;
+        }
+        .header-container h1 span {
+            color: #4B4B4B; /* Miner in dark grey */
+        }
+        .header-container .divider {
+            margin: 0 10px;
+            height: 20px;
+            width: 1px;
+            background-color: #ccc;
+        }
+        .header-container .section-title {
+            font-size: 18px;
+            color: #333;
+        }
+        .dashboard-container {
+            padding: 30px;
+        }
+        .welcome-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        .welcome-section .user-avatar {
+            background-color: #0078D4;
+            color: #ffffff;
+            font-size: 40px;
+            border-radius: 50%;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+        }
+        .welcome-section .welcome-text {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .welcome-section .user-name {
+            font-size: 20px;
+            color: #0078D4;
+        }
+        .links-header {
+            font-size: 18px;
+            font-weight: normal;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .links-container {
+            display: flex;
+            gap: 20px;
+        }
+        .link-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 150px;
+            text-align: center;
+            cursor: pointer;
+            transition: box-shadow 0.3s ease-in-out;
+        }
+        .link-card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .link-card a {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="header-container">
+    <h1>
+        Role<span>Miner</span>
+        <div class="divider"></div>
+        <span class="section-title">Dashboard</span>
+    </h1>
+</div>
+
+<div class="dashboard-container">
+    <div class="welcome-section">
+        <div class="user-avatar">👤</div>
+        <div>
+            <div class="welcome-text">Welcome,</div>
+            <div class="user-name">Admin_User</div>
+        </div>
+    </div>
+
+    <div class="links-header">Links</div>
+    <div class="links-container">
+        <div class="link-card">
+            <a href="/clustering/new">Start Mining</a>
+        </div>
+        <div class="link-card">
+            <a href="#">Previous Runs</a>
+        </div>
+        <div class="link-card">
+            <a href="#">Log Out</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
